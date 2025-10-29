@@ -3,6 +3,7 @@ import uploadOnCloudinary from "../Utills/cloudinary.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../Utills/apiError.js";
 import { ApiResponse } from "../Utills/apiResponse.js";
+import { sendAlertMail } from "../Utills/sendAlertMail.js";
 
 const uploadImage = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -28,9 +29,18 @@ const uploadImage = asyncHandler(async (req, res) => {
 
   await user.save();
 
+  sendAlertMail(user.email, cloudinaryResponse.secure_url)
+    .then(() => {
+      console.log(`Alert mail sent to ${user.email}`);
+    })
+    .catch(() => {
+      console.log(`Error sending the alert mail`, err);
+    });
+
   res.status(200).json(
     new ApiResponse(200, "Image uploaded succesfully!", {
       imageUrl: cloudinaryResponse.secure_url,
+      alertSent: false,
     })
   );
 });
