@@ -40,7 +40,7 @@ const uploadImage = asyncHandler(async (req, res) => {
   res.status(200).json(
     new ApiResponse(200, "Image uploaded succesfully!", {
       imageUrl: cloudinaryResponse.secure_url,
-      alertSent: false,
+      alertSent: true,
     })
   );
 });

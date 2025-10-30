@@ -159,10 +159,37 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Password Successfully updated.", {}));
 });
 
+const getUserData = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id);
+  if (!user) throw new ApiError(404, "User not found");
+
+  res.status(200).json(
+    new ApiResponse(200, "User data fetched successfully", {
+      user,
+    })
+  );
+});
+
+const getUser = asyncHandler(async (req, res) => {
+  const user = req.user;
+  if (!user) {
+    return res
+      .status(401)
+      .json(new ApiResponse(401, null, "Unauthorized: No user found"));
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "User fetched successfully"));
+});
+
 export {
   registerUser,
   loginUser,
   logOutUser,
   changeUserPassword,
   generateAccessRefreshToken,
+  getUserData,
+  getUser,
 };
